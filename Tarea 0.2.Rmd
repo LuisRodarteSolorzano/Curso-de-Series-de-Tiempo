@@ -1,0 +1,74 @@
+---
+title: "Tarea 0.2. Lectura y aplicación del paquete forecast para predicción"
+author: "Luis Manuel Rodarte Solórzano"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Pronóstico en R
+
+Primero se fija el directorio de trabajo:
+
+```{r}
+setwd("~/Doctorado/3er Cuatrimestre/Series de Tiempo/Bienvenida al curso de EST-624. Series de Tiempo")
+```
+
+
+A continuación se cargan los datos y se imprimen en la consola:
+
+```{r}
+sword <- read.csv("SwordDemand.csv")
+print(sword)
+```
+
+Aquí le decimos a R que esta es una Serie de Tiempo:
+
+```{r}
+sword.ts <- ts(sword, frequency = 12, start = c(2010,1))
+sword.ts
+```
+
+Ahora podemos graficar los datos también
+
+```{r}
+plot(sword.ts)
+```
+
+Ahora instalamos el paquete "forecast", lo cargamos y obtenemos los pronósticos:
+
+```{r}
+if (!require("forecast", quietly = TRUE)) install.packages("forecast")
+
+library(forecast)
+
+sword.forecast <- forecast(sword.ts)
+print(sword.forecast)
+```
+Se puede obtener un pronóstico con intervalos de predicción e imprimir la técnica usada de pronóstico:
+
+```{r}
+sword.forecast$method
+```
+Nota: Es un modelo de suavizamiento exponencial de series temporales dentro del marco **ETS** (*Error, Trend, Seasonal* o *Error, Tendencia, Estacionalidad*), popularizado por Rob J. Hyndman.
+
+Las tres letras entre paréntesis representan los componentes del modelo en ese mismo orden: **(E, T, S)**.
+
+* **E = M (Error Multiplicativo):** Las desviaciones o residuos del modelo varían de forma proporcional al nivel de la serie.
+* **T = A (Tendencia Aditiva):** La serie presenta una tendencia lineal constante (aumenta o disminuye en una cantidad fija por periodo).
+* **S = M (Estacionalidad Multiplicativa):** Las fluctuaciones estacionales aumentan o disminuyen proporcionalmente a la magnitud o nivel general de la serie temporal.
+
+
+La función forecast( ) ha escogido correr el modelo de atenuación exponencial Holt-Winters. Ahora se grafica:
+
+```{r}
+plot(sword.forecast)
+```
+
+
+
